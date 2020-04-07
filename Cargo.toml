@@ -1,8 +1,14 @@
 [package]
-name = "runtime"
+name = "scheme-compiler"
 version = "0.1.0"
 authors = ["Sankha Narayan Guria <sankha93@gmail.com>"]
+edition = "2018"
 
-[build-dependencies]
-cc = "1.0.3"
-compiler = { path = "compiler" }
+[lib]
+name = "compiler"
+path = "src/lib.rs"
+
+[dependencies]
+glob = "*"
+language = { path = "language" }
+interpreter = { path = "interpreter" }

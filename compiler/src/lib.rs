@@ -1,22 +1,11 @@
-extern crate nom;
 pub mod asm;
-pub mod ast;
-pub mod parser;
-pub mod compile;
+mod compile;
 
-use std::fs;
+extern crate language;
+use language::ast::Expr;
+
 use crate::asm::Asm;
 
-pub fn compile(filename: &str) -> Vec<Asm> {
-    let src = fs::read_to_string(filename).unwrap();
-    match parser::parse(&src) {
-      Ok((rem, expr)) => {
-        if rem.is_empty() {
-          compile::compile(expr)
-        } else {
-          panic!(format!("expected empty string, got {}", rem))
-        }
-      },
-      _ => panic!("parse error")
-    }
+pub fn compile(e: Expr) -> Vec<Asm> {
+    compile::compile(e)
 }

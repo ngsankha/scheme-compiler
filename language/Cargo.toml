@@ -1,12 +1,12 @@
 [package]
-name = "compiler"
+name = "language"
 version = "0.1.0"
 authors = ["Sankha Narayan Guria <sankha93@gmail.com>"]
 edition = "2018"
 
 [lib]
-name = "compiler"
+name = "language"
 path = "src/lib.rs"
 
 [dependencies]
-language = { path = "../language" }
+nom = "*"

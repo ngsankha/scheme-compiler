@@ -1,5 +1,5 @@
-use crate::ast::Expr;
-use crate::ast::Expr::*;
+use language::ast::Expr;
+use language::ast::Expr::*;
 use crate::asm::Asm;
 use crate::asm::Asm::*;
 use crate::asm::Register::*;
