@@ -11,6 +11,7 @@ fn main() {
         Ok(src) => src,
         _ => return
     };
+    println!("cargo:rerun-if-env-changed=SRC");
 
     let ast = language::parse_from_file(&src);
     let compiled = compiler::asm::asm_to_string(compiler::compile(ast));
