@@ -12,6 +12,8 @@ impl Register {
 
 pub enum Asm {
     Movq(u64, Register),
+    Addq(u64, Register),
+    Subq(u64, Register),
     Ret
 }
 
@@ -19,6 +21,8 @@ impl Asm {
     pub fn to_string(&self) -> String {
         match *self {
             Asm::Movq(val, ref r) => format!("movq ${}, {}", val, r.as_str()),
+            Asm::Addq(val, ref r) => format!("addq ${}, {}", val, r.as_str()),
+            Asm::Subq(val, ref r) => format!("subq ${}, {}", val, r.as_str()),
             Asm::Ret             => "ret".to_string()
         }
     }
