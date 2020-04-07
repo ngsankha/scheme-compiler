@@ -1,0 +1,8 @@
+[package]
+name = "runtime"
+version = "0.1.0"
+authors = ["Sankha Narayan Guria <sankha93@gmail.com>"]
+
+[build-dependencies]
+cc = "1.0.3"
+compiler = { path = "compiler" }

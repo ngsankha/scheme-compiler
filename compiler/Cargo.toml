@@ -1,0 +1,12 @@
+[package]
+name = "compiler"
+version = "0.1.0"
+authors = ["Sankha Narayan Guria <sankha93@gmail.com>"]
+edition = "2018"
+
+[lib]
+name = "compiler"
+path = "src/lib.rs"
+
+[dependencies]
+nom = "*"
