@@ -14,7 +14,8 @@ pub const PADDING: u64 = 1;
 
 impl Val {
     pub fn type_tag(&self) -> TypeTag {
-        match self.0 & !(!0 << PADDING) {
+        let mask = (1 << PADDING) - 1;
+        match self.0 & mask {
             0 => TypeTag::IntTag,
             1 => TypeTag::BoolTag,
             _ => unreachable!()
