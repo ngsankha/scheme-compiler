@@ -16,6 +16,6 @@ pub fn parse_from_file(filename: &str) -> ast::Expr {
           panic!(format!("expected empty string, got {}", rem))
         }
       },
-      _ => panic!("parse error")
+      Err(err) => panic!(err.to_string())
     }
 }

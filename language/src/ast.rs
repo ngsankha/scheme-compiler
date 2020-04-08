@@ -3,5 +3,6 @@ pub enum Expr {
     EBool(bool),
     EAdd1(Box<Expr>),
     ESub1(Box<Expr>),
+    EZeroh(Box<Expr>),
     EIf(Box<Expr>, Box<Expr>, Box<Expr>)
 }

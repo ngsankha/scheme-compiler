@@ -16,11 +16,11 @@ fn main() {
     match parser::parse(&prog) {
       Ok((rem, expr)) => {
         if rem.is_empty() {
-          println!("{}", lib::interp(expr))
+          println!("{}", lib::interp(expr).to_string())
         } else {
           panic!(format!("expected empty string, got {}", rem))
         }
       },
-      _ => panic!("parse error")
+      Err(err) => panic!(err.to_string())
     };
 }

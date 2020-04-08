@@ -1,6 +1,6 @@
 use language::ast::Expr;
 use language::ast::Expr::*;
-use language::dtypes::Val;
+use language::dtypes::{Val, PADDING};
 use crate::asm::Asm;
 use crate::asm::Asm::*;
 use crate::asm::Register::*;
@@ -22,6 +22,7 @@ fn compile_expr(ctx: &mut Context, e: Expr) -> Vec<Asm> {
         EBool(b) => compile_bool(ctx, b),
         EAdd1(e) => compile_add1(ctx, e),
         ESub1(e) => compile_sub1(ctx, e),
+        EZeroh(e) => compile_zeroh(ctx, e),
         EIf(e0, e1, e2) => compile_if(ctx, e0, e1, e2)
     }
 }
@@ -50,6 +51,21 @@ fn compile_sub1(ctx: &mut Context, e0: Box<Expr>) -> Vec<Asm> {
     c0
 }
 
+fn compile_zeroh(ctx: &mut Context, e0: Box<Expr>) -> Vec<Asm> {
+    let mut c0 = compile_expr(ctx, *e0);
+    let l0 = gensym(ctx, "zeroh");
+    let t: Val = true.into();
+    let f: Val = false.into();
+    let z: Val = 0.into();
+
+    c0.extend(vec![Cmpq(z.into(), Rax),
+        Movq(f.into(), Rax),
+        Jne(l0.clone()),
+        Movq(t.into(), Rax),
+        Label(l0)]);
+    c0
+}
+
 fn compile_if(ctx: &mut Context, e0: Box<Expr>, e1: Box<Expr>, e2: Box<Expr>) -> Vec<Asm> {
     let c0 = compile_expr(ctx, *e0);
     let c1 = compile_expr(ctx, *e1);
@@ -58,9 +74,12 @@ fn compile_if(ctx: &mut Context, e0: Box<Expr>, e1: Box<Expr>, e2: Box<Expr>) ->
     let l1 = gensym(ctx, "if");
     let z: Val = 0.into();
 
+    // we handle falsy values by right shifting away the type tag
+    // falsy values of every type will be 0 when this is done
     vec![c0,
-        vec![Cmpq(z.into(), Rax)],
-        vec![Jne(l0.clone())],
+        vec![Shrq(PADDING, Rax),
+        Cmpq(z.into(), Rax),
+        Je(l0.clone())],
         c1,
         vec![Jmp(l1.clone())],
         vec![Label(l0)],

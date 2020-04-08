@@ -28,6 +28,7 @@ fn parse_sexpr(input: &str) -> IResult<&str, Expr> {
                 terminated(
                     alt((parse_add1,
                          parse_sub1,
+                         parse_zeroh,
                          parse_if)),
                     multispace0),
                 tag(")"))))(input)
@@ -81,30 +82,24 @@ fn parse_sub1(input: &str) -> IResult<&str, Expr> {
             parse_expr)), to_sub1)(input)
 }
 
-fn parse_int(input: &str) -> IResult<&str, Expr> {
-    map_res(digit1, to_int)(input)
-}
-
-fn to_zeroh(e: Expr) -> Result<Expr, ()> {
-    Ok(e)
-}
-
 fn parse_zeroh(input: &str) -> IResult<&str, Expr> {
     map_res(preceded(tag("zero?"),
         preceded(multispace0,
             parse_expr)), to_zeroh)(input)
 }
 
+fn parse_int(input: &str) -> IResult<&str, Expr> {
+    map_res(digit1, to_int)(input)
+}
+
+fn to_zeroh(e: Expr) -> Result<Expr, ()> {
+    Ok(EZeroh(Box::new(e)))
+}
+
 fn parse_if(input: &str) -> IResult<&str, Expr> {
     map_res(preceded(tag("if"),
-        preceded(multispace1,
-                tuple((preceded(tag("("),
-                        preceded(multispace0,
-                            terminated(
-                                terminated(parse_zeroh,
-                                multispace0),
-                            tag(")")))),
-                        preceded(multispace1, parse_expr),
-                        preceded(multispace1, parse_expr))))), to_if)(input)
+        preceded(multispace1, tuple((parse_expr,
+                preceded(multispace1, parse_expr),
+                preceded(multispace1, parse_expr))))), to_if)(input)
 }
 

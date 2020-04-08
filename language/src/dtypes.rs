@@ -10,7 +10,7 @@ pub enum TypeTag {
     BoolTag
 }
 
-const PADDING: u64 = 1;
+pub const PADDING: u64 = 1;
 
 impl Val {
     pub fn type_tag(&self) -> TypeTag {
@@ -41,6 +41,13 @@ impl Val {
             } else {
                 "#f".to_string()
             }
+        }
+    }
+
+    pub fn is_truthy(&self) -> bool {
+        match self.type_tag() {
+            TypeTag::IntTag => self.to_u64() != 0,
+            TypeTag::BoolTag => self.to_bool()
         }
     }
 }

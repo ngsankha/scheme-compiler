@@ -28,6 +28,8 @@ pub enum Asm {
     Cmpq(Rep, Register),
     Jmp(String),
     Jne(String),
+    Je(String),
+    Shrq(u64, Register),
     Ret
 }
 
@@ -41,6 +43,8 @@ impl Asm {
             Asm::Cmpq(val, ref r) => format!("\tcmpq ${}, {}", val.0, r.as_str()),
             Asm::Jmp(label)       => format!("\tjmp {}", label),
             Asm::Jne(label)       => format!("\tjne {}", label),
+            Asm::Je(label)        => format!("\tje {}", label),
+            Asm::Shrq(val, ref r) => format!("\tshrq ${}, {}", val, r.as_str()),
             Asm::Ret              => "ret".to_string()
         }
     }
