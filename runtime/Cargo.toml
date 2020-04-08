@@ -10,3 +10,6 @@ edition = "2018"
 cc = "1.0.3"
 language = { path = "../language" }
 compiler = { path = "../compiler" }
+
+[dependencies]
+language = { path = "../language" }

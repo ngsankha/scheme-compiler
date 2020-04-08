@@ -1,8 +1,12 @@
+extern crate language;
+
+use language::dtypes::Val;
+
 extern "C" {
-    fn entry() -> u64;
+    fn entry() -> Val;
 }
 
 fn main() {
     let result = unsafe { entry() };
-    println!("{}", result);
+    println!("{}", result.to_string());
 }

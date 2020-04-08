@@ -1,19 +1,24 @@
 use language::ast::Expr;
 use language::ast::Expr::*;
+use language::dtypes::{Val, TypeTag};
 
-pub fn interp(e: Expr) -> u64 {
+pub fn interp(e: Expr) -> Val {
     match e {
-        EInt(n) => n,
-        EAdd1(e0) => interp(*e0) + 1,
-        ESub1(e0) => interp(*e0) - 1,
-        EIf(e0, e1, e2) => if interp(*e0) == 0 {
-            interp(*e1)
-        } else {
-            interp(*e2)
+        EInt(n) => n.into(),
+        EBool(b) => b.into(),
+        EAdd1(e0) => interp(*e0) + 1.into(),
+        ESub1(e0) => interp(*e0) - 1.into(),
+        EIf(e0, e1, e2) => {
+            let b = interp(*e0) == 0.into();
+            if b {
+                interp(*e1)
+            } else {
+                interp(*e2)
+            }
         }
     }
 }
 
-pub fn to_human_str(r: u64) -> String {
+pub fn to_human_str(r: Val) -> String {
     format!("{}\n", r.to_string())
 }

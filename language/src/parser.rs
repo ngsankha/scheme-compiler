@@ -2,7 +2,7 @@ use nom::{IResult,
     character::streaming::digit1,
     character::streaming::multispace0,
     character::streaming::multispace1,
-    character::is_digit,
+    character::streaming::char,
     sequence::terminated,
     sequence::preceded,
     sequence::tuple,
@@ -17,24 +17,44 @@ pub fn parse(input: &str) -> IResult<&str, Expr> {
     terminated(parse_expr, nom::character::complete::multispace0)(input)
 }
 
-fn int_from_str(input: &str) -> Result<Expr, std::num::ParseIntError> {
+fn to_int(input: &str) -> Result<Expr, std::num::ParseIntError> {
     input.parse::<u64>().map(|n| EInt(n))
 }
 
-fn parse_expr(input: &str) -> IResult<&str, Expr> {
-    if is_digit(input.as_bytes()[0]) {
-        parse_int(input)
-    } else {
-        preceded(tag("("),
-            preceded(multispace0,
+fn parse_sexpr(input: &str) -> IResult<&str, Expr> {
+    preceded(tag("("),
+        preceded(multispace0,
+            terminated(
                 terminated(
-                    terminated(
-                        alt((parse_add1,
-                             parse_sub1,
-                             parse_if)),
-                        multispace0),
-                    tag(")"))))(input)
-    }
+                    alt((parse_add1,
+                         parse_sub1,
+                         parse_if)),
+                    multispace0),
+                tag(")"))))(input)
+}
+
+fn parse_expr(input: &str) -> IResult<&str, Expr> {
+    alt((parse_int, parse_bool, parse_sexpr))(input)
+}
+
+fn parse_true(input: &str) -> IResult<&str, Expr> {
+    map_res(char('t'), to_bool)(input)
+}
+
+fn parse_false(input: &str) -> IResult<&str, Expr> {
+    map_res(char('f'), to_bool)(input)
+}
+
+fn parse_bool(input: &str) -> IResult<&str, Expr> {
+    preceded(tag("#"), alt((parse_true, parse_false)))(input)
+}
+
+fn to_bool(input: char) -> Result<Expr, std::num::ParseIntError> {
+    Ok(match input {
+        't' => EBool(true),
+        'f' => EBool(false),
+        _ => unreachable!()
+    })
 }
 
 fn to_add1(e: Expr) -> Result<Expr, ()> {
@@ -62,7 +82,7 @@ fn parse_sub1(input: &str) -> IResult<&str, Expr> {
 }
 
 fn parse_int(input: &str) -> IResult<&str, Expr> {
-    map_res(digit1, int_from_str)(input)
+    map_res(digit1, to_int)(input)
 }
 
 fn to_zeroh(e: Expr) -> Result<Expr, ()> {
